@@ -1,0 +1,16 @@
+{
+  "name": "eslint-plugin-jcanvas",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Custom eslint rules for Jcanvas.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "../../node_modules/.bin/mocha src/**/*.test.js",
+    "build": "echo done"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jmodel/jcanvas.git"
+  },
+  "license": "MIT"
+}
