@@ -11,6 +11,7 @@ var _DialogTitle = _interopRequireDefault(require("@material-ui/core/DialogTitle
 var _EnhancedTable = _interopRequireDefault(require("../Mui/EnhancedTable"));
 
 import { fromJS, List, Map as ImmutableMap } from 'immutable';
+import classNames from 'classnames';
 
 const compMap = ImmutableMap(
   {
@@ -31,8 +32,20 @@ function setClassName(props, classes) {
   let retProps = {};
   let className = props["className"];
   if (typeof className !== 'undefined' && typeof classes !== 'undefined') {
-    if (typeof classes[className] !== 'undefined') {
-      Object.assign(retProps, props, { className: classes[className] });
+
+    let validClasses = List()
+    var key, bln, prop, owns = Object.prototype.hasOwnProperty;
+    for (key in className) {
+      if (owns.call(className, key)) {
+        bln = className[key];
+        if (bln && typeof classes[key] !== 'undefined') {
+          validClasses = validClasses.push(classes[key]);
+        }
+      }
+    }
+
+    if (validClasses.size > 0) {
+      Object.assign(retProps, props, { className: classNames(validClasses.toArray()) });
       return retProps;
     }
   }
