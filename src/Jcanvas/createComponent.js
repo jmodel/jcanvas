@@ -32,18 +32,15 @@ function setClassName(props, classes) {
   let retProps = {};
   let className = props["className"];
   if (typeof className !== 'undefined' && typeof classes !== 'undefined') {
-
     let validClasses = List()
-    var key, bln, prop, owns = Object.prototype.hasOwnProperty;
+    var key, owns = Object.prototype.hasOwnProperty;
     for (key in className) {
       if (owns.call(className, key)) {
-        bln = className[key];
-        if (bln && typeof classes[key] !== 'undefined') {
+        if (className[key] && typeof classes[key] !== 'undefined') {
           validClasses = validClasses.push(classes[key]);
         }
       }
     }
-
     if (validClasses.size > 0) {
       Object.assign(retProps, props, { className: classNames(validClasses.toArray()) });
       return retProps;
@@ -62,14 +59,12 @@ export default function createComponent(props, defaultPropsMap, classes, compone
   if (typeof defaultPropsMap !== 'undefined') {
     defaultProps = defaultPropsMap.get(type);
   }
-
   if (typeof defaultProps === 'undefined') {
     Object.assign(finalProps, overrideProps);
   } else {
     defaultProps = setClassName(defaultProps, classes);
     Object.assign(finalProps, defaultProps, overrideProps);
   }
-
   let childlist;
   if (typeof children !== 'undefined' && !isString(children)) {
     childlist = fromJS(children).map((childProps, childComponentIndex) => {
