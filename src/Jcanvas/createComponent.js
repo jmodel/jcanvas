@@ -3,11 +3,21 @@
 var _interopRequireDefault = require("@babel/runtime/helpers/builtin/interopRequireDefault");
 var _react = _interopRequireDefault(require("react"));
 var _MuiThemeProvider = _interopRequireDefault(require("@material-ui/core/styles/MuiThemeProvider"));
-var _Button = _interopRequireDefault(require("@material-ui/core/Button"));
+
+var _ChevronRightIcon = _interopRequireDefault(require("@material-ui/icons/ChevronRight"));
+var _MenuIcon = _interopRequireDefault(require("@material-ui/icons/Menu"));
 var _NavigationIcon = _interopRequireDefault(require("@material-ui/icons/Navigation"));
+
+var _AppBar = _interopRequireDefault(require("@material-ui/core/AppBar"));
+var _Button = _interopRequireDefault(require("@material-ui/core/Button"));
 var _Dialog = _interopRequireDefault(require("@material-ui/core/Dialog"));
 var _DialogActions = _interopRequireDefault(require("@material-ui/core/DialogActions"));
 var _DialogTitle = _interopRequireDefault(require("@material-ui/core/DialogTitle"));
+var _Drawer = _interopRequireDefault(require("@material-ui/core/Drawer"));
+var _IconButton = _interopRequireDefault(require("@material-ui/core/IconButton"));
+var _Toolbar = _interopRequireDefault(require("@material-ui/core/Toolbar"));
+var _Typography = _interopRequireDefault(require("@material-ui/core/Typography"));
+
 var _EnhancedTable = _interopRequireDefault(require("../Mui/EnhancedTable"));
 
 import { fromJS, List, Map as ImmutableMap } from 'immutable';
@@ -15,12 +25,22 @@ import classNames from 'classnames';
 
 const compMap = ImmutableMap(
   {
-    "Button": _Button.default,
+    "ChevronRightIcon": _ChevronRightIcon.default,
+    "MenuIcon": _MenuIcon.default,
     "NavigationIcon": _NavigationIcon.default,
+
+    "AppBar": _AppBar.default,
+    "Button": _Button.default,
     "Dialog": _Dialog.default,
-    "DialogTitle": _DialogTitle.default,
     "DialogActions": _DialogActions.default,
+    "DialogTitle": _DialogTitle.default,
+    "Drawer": _Drawer.default,
+    "IconButton": _IconButton.default,
+    "Toolbar": _Toolbar.default,
+    "Typography": _Typography.default,
+
     "EnhancedTable": _EnhancedTable.default
+
   });
 
 
@@ -67,7 +87,7 @@ export default function createComponent(props, defaultPropsMap, classes, compone
   }
   let childlist;
   if (typeof children !== 'undefined' && !isString(children)) {
-    childlist = fromJS(children).map((childProps, childComponentIndex) => {
+    children = fromJS(children).map((childProps, childComponentIndex) => {
       if (isString(childProps)) {
         return childProps;
       } else {
@@ -77,13 +97,7 @@ export default function createComponent(props, defaultPropsMap, classes, compone
   }
 
   let comp = compMap.get(type);
-  if (isString(children)) {
-    return _react.default.createElement("div", null, _react.default.createElement(comp, {
-      ...finalProps
-    }, children));
-  } else {
-    return _react.default.createElement("div", null, _react.default.createElement(comp, {
-      ...finalProps
-    }, childlist));
-  }
+  return _react.default.createElement(typeof comp === 'undefined' ? type : comp, {
+    ...finalProps
+  }, children);
 }

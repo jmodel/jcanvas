@@ -21,9 +21,9 @@ class Jcanvas extends Component {
 
     const { ui, defaultPropsMap, css = {}, themes = {} } = this.props;
 
-    const Styled = createStyled(css);
-
     const theme = createMuiTheme(themes);
+
+    const Styled = createStyled(css(theme));
 
     return (
       <Styled>
