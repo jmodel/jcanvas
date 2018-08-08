@@ -12,7 +12,7 @@ function createStyled(styles, options) {
     return children(other);
   }
 
-  return withStyles(styles, options)(Styled);
+  return withStyles(styles, { withTheme: true })(Styled);
 }
 
 class Jcanvas extends Component {

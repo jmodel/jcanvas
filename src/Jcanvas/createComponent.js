@@ -5,6 +5,8 @@ var _react = _interopRequireDefault(require("react"));
 var _MuiThemeProvider = _interopRequireDefault(require("@material-ui/core/styles/MuiThemeProvider"));
 
 var _ChevronRightIcon = _interopRequireDefault(require("@material-ui/icons/ChevronRight"));
+var _ChevronLeftIcon = _interopRequireDefault(require("@material-ui/icons/ChevronLeft"));
+var _InboxIcon = _interopRequireDefault(require("@material-ui/icons/Inbox"));
 var _MenuIcon = _interopRequireDefault(require("@material-ui/icons/Menu"));
 var _NavigationIcon = _interopRequireDefault(require("@material-ui/icons/Navigation"));
 
@@ -13,8 +15,14 @@ var _Button = _interopRequireDefault(require("@material-ui/core/Button"));
 var _Dialog = _interopRequireDefault(require("@material-ui/core/Dialog"));
 var _DialogActions = _interopRequireDefault(require("@material-ui/core/DialogActions"));
 var _DialogTitle = _interopRequireDefault(require("@material-ui/core/DialogTitle"));
+var _Divider = _interopRequireDefault(require("@material-ui/core/Divider"));
 var _Drawer = _interopRequireDefault(require("@material-ui/core/Drawer"));
 var _IconButton = _interopRequireDefault(require("@material-ui/core/IconButton"));
+var _List = _interopRequireDefault(require("@material-ui/core/List"));
+var _ListItem = _interopRequireDefault(require("@material-ui/core/ListItem"));
+var _ListItemIcon = _interopRequireDefault(require("@material-ui/core/ListItemIcon"));
+var _ListItemText = _interopRequireDefault(require("@material-ui/core/ListItemText"));
+
 var _Toolbar = _interopRequireDefault(require("@material-ui/core/Toolbar"));
 var _Typography = _interopRequireDefault(require("@material-ui/core/Typography"));
 
@@ -26,6 +34,8 @@ import classNames from 'classnames';
 const compMap = ImmutableMap(
   {
     "ChevronRightIcon": _ChevronRightIcon.default,
+    "ChevronLeftIcon": _ChevronLeftIcon.default,
+    "InboxIcon": _InboxIcon.default,
     "MenuIcon": _MenuIcon.default,
     "NavigationIcon": _NavigationIcon.default,
 
@@ -34,8 +44,13 @@ const compMap = ImmutableMap(
     "Dialog": _Dialog.default,
     "DialogActions": _DialogActions.default,
     "DialogTitle": _DialogTitle.default,
+    "Divider": _Divider.default,
     "Drawer": _Drawer.default,
     "IconButton": _IconButton.default,
+    "List": _List.default,
+    "ListItem": _ListItem.default,
+    "ListItemIcon": _ListItemIcon.default,
+    "ListItemText": _ListItemText.default,
     "Toolbar": _Toolbar.default,
     "Typography": _Typography.default,
 
@@ -48,28 +63,60 @@ function isString(value) {
   return Object.prototype.toString.call(value) === "[object String]"
 }
 
-function setClassName(props, classes) {
-  let retProps = {};
-  let className = props["className"];
-  if (typeof className !== 'undefined' && typeof classes !== 'undefined') {
-    let validClasses = List()
-    var key, owns = Object.prototype.hasOwnProperty;
-    for (key in className) {
-      if (owns.call(className, key)) {
-        if (className[key] && typeof classes[key] !== 'undefined') {
-          validClasses = validClasses.push(classes[key]);
+function setClassName(props, classes, entered) {
+
+  let key, owns = Object.prototype.hasOwnProperty;
+  for (key in props) {
+    if (owns.call(props, key)) {
+      if (key !== 'undefined') {
+        if (key === 'classes') {
+          let retProps = {};
+          let x = ImmutableMap();
+          x = x.set(key, setClassName(props[key], classes, true));
+          let o = x.toJS();
+          let obj = o.classes;
+          console.log(o);
+          Object.assign(retProps, props, { classes: { obj } });
+          return retProps;
+        } else if (key !== 'className' && entered) {
+          let retProps = {};
+          let x = ImmutableMap();
+          x = x.set(key, setClassName(props[key], classes, true));
+          console.log(x.toJS());
+          Object.assign(retProps, props, x.toJS());
+          return retProps;
+        } else if (key === 'className') {
+          let className = props["className"];
+          if (typeof className !== 'undefined' && typeof classes !== 'undefined') {
+            let validClasses = List()
+            let key, owns = Object.prototype.hasOwnProperty;
+            for (key in className) {
+              if (owns.call(className, key)) {
+                if (className[key] && typeof classes[key] !== 'undefined') {
+                  validClasses = validClasses.push(classes[key]);
+                }
+              }
+            }
+            if (validClasses.size > 0) {
+              let retProps = {};
+              Object.assign(retProps, props, { className: classNames(validClasses.toArray()) });
+              return retProps;
+            }
+          }
         }
       }
     }
-    if (validClasses.size > 0) {
-      Object.assign(retProps, props, { className: classNames(validClasses.toArray()) });
-      return retProps;
-    }
   }
+
   return props;
 }
 
 export default function createComponent(props, defaultPropsMap, classes, componentIndex) {
+  let hidden = props.get("hidden");
+  if (typeof hidden !== 'undefined' && hidden) {
+    return;
+  }
+
   let type = props.get("type");
   let children = props.get("children");
   let overrideProps = props.toJS();
@@ -85,7 +132,6 @@ export default function createComponent(props, defaultPropsMap, classes, compone
     defaultProps = setClassName(defaultProps, classes);
     Object.assign(finalProps, defaultProps, overrideProps);
   }
-  let childlist;
   if (typeof children !== 'undefined' && !isString(children)) {
     children = fromJS(children).map((childProps, childComponentIndex) => {
       if (isString(childProps)) {
@@ -94,6 +140,9 @@ export default function createComponent(props, defaultPropsMap, classes, compone
         return createComponent(childProps, defaultPropsMap, classes, childComponentIndex);
       }
     });
+    if (children.size === 1) {
+      children = children.get(0);
+    }
   }
 
   let comp = compMap.get(type);
