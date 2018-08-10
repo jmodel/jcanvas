@@ -27,6 +27,7 @@ var _Toolbar = _interopRequireDefault(require("@material-ui/core/Toolbar"));
 var _Typography = _interopRequireDefault(require("@material-ui/core/Typography"));
 
 var _EnhancedTable = _interopRequireDefault(require("../Mui/EnhancedTable"));
+var _MiniDrawer = _interopRequireDefault(require("../Mui/MiniDrawer"));
 
 import { fromJS, List, Map as ImmutableMap } from 'immutable';
 import classNames from 'classnames';
@@ -54,7 +55,8 @@ const compMap = ImmutableMap(
     "Toolbar": _Toolbar.default,
     "Typography": _Typography.default,
 
-    "EnhancedTable": _EnhancedTable.default
+    "EnhancedTable": _EnhancedTable.default,
+    "MiniDrawer": _MiniDrawer.default
 
   });
 
@@ -63,7 +65,7 @@ function isString(value) {
   return Object.prototype.toString.call(value) === "[object String]"
 }
 
-function setClassName(props, classes, entered) {
+function setClassName(props, globalClasses, entered) {
 
   let key, owns = Object.prototype.hasOwnProperty;
   for (key in props) {
@@ -72,28 +74,26 @@ function setClassName(props, classes, entered) {
         if (key === 'classes') {
           let retProps = {};
           let x = ImmutableMap();
-          x = x.set(key, setClassName(props[key], classes, true));
-          let o = x.toJS();
-          let obj = o.classes;
-          console.log(o);
-          Object.assign(retProps, props, { classes: { obj } });
+          x = x.set(key, setClassName(props[key], globalClasses, true));
+          let className = x.get('classes').paper.className;
+          Object.assign(retProps, props, { classes: { paper: className } });
           return retProps;
         } else if (key !== 'className' && entered) {
           let retProps = {};
           let x = ImmutableMap();
-          x = x.set(key, setClassName(props[key], classes, true));
+          x = x.set(key, setClassName(props[key], globalClasses, true));
           console.log(x.toJS());
           Object.assign(retProps, props, x.toJS());
           return retProps;
         } else if (key === 'className') {
           let className = props["className"];
-          if (typeof className !== 'undefined' && typeof classes !== 'undefined') {
+          if (typeof className !== 'undefined' && typeof globalClasses !== 'undefined') {
             let validClasses = List()
             let key, owns = Object.prototype.hasOwnProperty;
             for (key in className) {
               if (owns.call(className, key)) {
-                if (className[key] && typeof classes[key] !== 'undefined') {
-                  validClasses = validClasses.push(classes[key]);
+                if (className[key] && typeof globalClasses[key] !== 'undefined') {
+                  validClasses = validClasses.push(globalClasses[key]);
                 }
               }
             }
@@ -111,7 +111,7 @@ function setClassName(props, classes, entered) {
   return props;
 }
 
-export default function createComponent(props, defaultPropsMap, classes, componentIndex) {
+export default function createComponent(props, defaultPropsMap, globalClasses, componentIndex) {
   let hidden = props.get("hidden");
   if (typeof hidden !== 'undefined' && hidden) {
     return;
@@ -120,7 +120,7 @@ export default function createComponent(props, defaultPropsMap, classes, compone
   let type = props.get("type");
   let children = props.get("children");
   let overrideProps = props.toJS();
-  overrideProps = setClassName(overrideProps, classes);
+  overrideProps = setClassName(overrideProps, globalClasses);
   let defaultProps;
   let finalProps = {};
   if (typeof defaultPropsMap !== 'undefined') {
@@ -129,7 +129,7 @@ export default function createComponent(props, defaultPropsMap, classes, compone
   if (typeof defaultProps === 'undefined') {
     Object.assign(finalProps, overrideProps);
   } else {
-    defaultProps = setClassName(defaultProps, classes);
+    defaultProps = setClassName(defaultProps, globalClasses);
     Object.assign(finalProps, defaultProps, overrideProps);
   }
   if (typeof children !== 'undefined' && !isString(children)) {
@@ -137,7 +137,7 @@ export default function createComponent(props, defaultPropsMap, classes, compone
       if (isString(childProps)) {
         return childProps;
       } else {
-        return createComponent(childProps, defaultPropsMap, classes, childComponentIndex);
+        return createComponent(childProps, defaultPropsMap, globalClasses, childComponentIndex);
       }
     });
     if (children.size === 1) {
