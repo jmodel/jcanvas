@@ -18,7 +18,7 @@ module.exports = {
     ecmaVersion: 7,
     sourceType: 'module',
   },
-  plugins: ['babel', 'import', 'jsx-a11y', 'mocha', 'flowtype', 'jcanvas', 'prettier'],
+  plugins: ['babel', 'import', 'jsx-a11y', 'flowtype', 'jcanvas', 'prettier'],
   settings: {
     'import/resolver': {
       webpack: {
@@ -88,12 +88,6 @@ module.exports = {
     'react/sort-prop-types': 'error', // airbnb use off
 
     'jcanvas/docgen-ignore-before-comment': 'error',
-
-    'mocha/handle-done-callback': 'error',
-    'mocha/no-exclusive-tests': 'error',
-    'mocha/no-global-tests': 'error',
-    'mocha/no-pending-tests': 'error',
-    'mocha/no-skipped-tests': 'error',
 
     'flowtype/define-flow-type': 'error',
     'flowtype/require-valid-file-annotation': 'off',
